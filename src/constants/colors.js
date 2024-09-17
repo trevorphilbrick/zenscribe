@@ -4,5 +4,6 @@ export const colors = {
   textPrimary: "#FFFFFF",
   textSecondary: "#d3d2d2",
   primary: "#93B1A6",
+  primaryPressed: "#527366",
   secondary: "#5C8374",
 };
