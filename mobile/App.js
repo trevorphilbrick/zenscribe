@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import Root from "./src/navigators/Root";
 import { colors } from "./src/constants/colors.js";
 import { StytchClient, StytchProvider } from "@stytch/react-native";
@@ -17,6 +17,7 @@ const theme = {
 export default function App() {
   return (
     <StytchProvider stytch={stytch}>
+      <StatusBar style="dark" backgroundColor={colors.background} />
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
         <NavigationContainer theme={theme}>
           <Root />
