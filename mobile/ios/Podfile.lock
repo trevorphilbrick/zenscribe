@@ -1248,6 +1248,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNVectorIcons (10.2.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - SocketRocket (0.7.0)
   - StytchReactNativeModule (0.32.1):
     - StytchReactNativeModule/Base (= 0.32.1)
@@ -1325,6 +1346,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNInAppBrowser (from `../node_modules/@stytch/react-native-inappbrowser-reborn`)"
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - "StytchReactNativeModule (from `../node_modules/@stytch/react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1464,6 +1486,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@stytch/react-native-inappbrowser-reborn"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   StytchReactNativeModule:
     :path: "../node_modules/@stytch/react-native"
   Yoga:
@@ -1535,6 +1559,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
   RNInAppBrowser: 360b6a66b22035fb16062f2c7c492d28207c55da
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
+  RNVectorIcons: 845eda5c7819bd29699cafd0fc98c9d4afe28c96
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   StytchReactNativeModule: e3817cf7f8de751935f035602d9b99475562b874
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
