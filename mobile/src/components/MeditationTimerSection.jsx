@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable, Modal } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Text from "./Text";
 import Button from "./Button";
@@ -11,8 +11,15 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import React from "react";
+import { Picker } from "@react-native-picker/picker";
+import Icon from "react-native-vector-icons/AntDesign";
+
+const quickTimes = [3, 5, 10];
+const times = Array.from({ length: 60 }, (_, i) => i + 1);
 
 const MeditationTimerSection = () => {
+  const [selectedTime, setSelectedTime] = React.useState(3);
+  const [timeModalVisible, setTimeModalVisible] = React.useState(false);
   const { navigate } = useNavigation();
   const progressOne = useSharedValue(0);
   const progressTwo = useSharedValue(0);
@@ -47,9 +54,101 @@ const MeditationTimerSection = () => {
         <Animated.View style={[styles.oval, animatedStylesTwo]} />
         <View style={styles.circle} />
       </View>
-      <Button onPress={() => navigate("MeditationTimer")}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginBottom: 16,
+        }}
+      >
+        {quickTimes.map((time) => (
+          <Pressable
+            key={time}
+            style={{
+              padding: 8,
+              backgroundColor:
+                time === selectedTime ? colors.selected : colors.onBackground,
+              borderRadius: 2,
+            }}
+            onPress={() => setSelectedTime(time)}
+          >
+            <Text>{time} min</Text>
+          </Pressable>
+        ))}
+
+        <Pressable
+          style={{
+            padding: 8,
+            borderRadius: 2,
+            backgroundColor: quickTimes.includes(selectedTime)
+              ? colors.onBackground
+              : colors.selected,
+          }}
+          onPress={() => setTimeModalVisible(true)}
+        >
+          <Text>Custom</Text>
+        </Pressable>
+      </View>
+      <Button
+        onPress={() => navigate("MeditationTimer", { duration: selectedTime })}
+      >
         <Text>Start Meditation Timer</Text>
       </Button>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={timeModalVisible}
+        onRequestClose={() => {
+          setTimeModalVisible(false);
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: colors.backgroundTransparent,
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: colors.onBackground,
+              padding: 16,
+              margin: 16,
+              borderRadius: 4,
+            }}
+          >
+            <Icon
+              name="close"
+              size={24}
+              color={colors.textPrimary}
+              style={{ alignSelf: "flex-end", marginBottom: 16 }}
+              onPress={() => setTimeModalVisible(false)}
+            />
+            <Picker
+              selectedValue={selectedTime}
+              onValueChange={(itemValue) => setSelectedTime(itemValue)}
+              itemStyle={{ color: colors.textPrimary }}
+              style={{ marginBottom: 16 }}
+            >
+              {times.map((time) => (
+                <Picker.Item
+                  key={time}
+                  label={`${time} ${time === 1 ? "minute" : "minutes"}`}
+                  value={time}
+                />
+              ))}
+            </Picker>
+            <Button
+              onPress={() => {
+                navigate("MeditationTimer", { duration: selectedTime });
+                setTimeModalVisible(false);
+              }}
+            >
+              <Text>Done</Text>
+            </Button>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
