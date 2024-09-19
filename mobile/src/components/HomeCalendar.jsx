@@ -9,10 +9,6 @@ const HomeCalendar = () => {
       onDayPress={(day) => {
         navigate("DayActivityModal", { date: day });
       }}
-      onPressArrowLeft={(substractMonth, time) => {
-        substractMonth();
-        console.log("month", month);
-      }}
       theme={{
         calendarBackground: colors.background,
         textSectionTitleColor: colors.textPrimary,
