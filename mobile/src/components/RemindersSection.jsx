@@ -44,7 +44,7 @@ export default function RemindersSection() {
     const trigger = {
       type: TriggerType.TIMESTAMP,
       timestamp: date.getTime(),
-      repeatFrequency: RepeatFrequency.HOURLY,
+      repeatFrequency: RepeatFrequency.DAILY,
       alarmManager: {
         allowWhileIdle: true,
       },
@@ -74,7 +74,7 @@ export default function RemindersSection() {
       <Button onPress={showTimepicker}>
         <Text>Show Time Picker</Text>
       </Button>
-      <Text>selected: {date.getHours()}</Text>
+      <Text>selected: {date.toTimeString().split(" ")[0]}</Text>
       {show && <DateTimePicker testID="dateTimePicker" value={date} mode={mode} onChange={onChange} />}
     </View>
   );
