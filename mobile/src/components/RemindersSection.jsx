@@ -2,33 +2,11 @@ import { View, StyleSheet } from "react-native";
 import { colors } from "../constants/colors";
 import Text from "./Text";
 import React from "react";
-import notifee, { TimetampTrigger, TriggerType } from "@notifee/react-native";
+import notifee, { TriggerType, RepeatFrequency } from "@notifee/react-native";
 import Button from "./Button";
+import { randomUUID } from "expo-crypto";
 
 export default function RemindersSection() {
-  // async function onDisplayNotification() {
-  //   // Request permissions (required for iOS)
-  //   await notifee.requestPermission();
-
-  // Create a channel (required for Android)
-  // const channelId = await notifee.createChannel({
-  //   id: "default",
-  //   name: "Default Channel",
-  // });
-
-  //   // Display a notification
-  //   await notifee.displayNotification({
-  //     title: "Meditation Reminder",
-  //     body: "It's time to meditate.",
-  //     android: {
-  //       channelId,
-  //       // pressAction is needed if you want the notification to open the app when pressed
-  //       pressAction: {
-  //         id: "default",
-  //       },
-  //     },
-  //   });
-  // }
   async function onCreateTriggerNotification() {
     const channelId = await notifee.createChannel({
       id: "default",
@@ -36,19 +14,21 @@ export default function RemindersSection() {
     });
 
     const date = new Date(Date.now());
-    date.setHours(11);
-    date.setMinutes(56);
+    date.setHours(13);
+    date.setMinutes(1);
 
-    // Create a time-based trigger
     const trigger = {
       type: TriggerType.TIMESTAMP,
-      timestamp: date.getTime(), // fire at 11:10am (10 minutes before meeting)
+      timestamp: date.getTime(),
       repeatFrequency: RepeatFrequency.DAILY,
+      alarmManager: {
+        allowWhileIdle: true,
+      },
     };
 
-    // Create a trigger notification
     await notifee.createTriggerNotification(
       {
+        id: randomUUID(),
         title: "Don't forget to breath.",
         body: "It's time to meditate.",
         android: {
