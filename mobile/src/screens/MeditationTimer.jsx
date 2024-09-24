@@ -3,6 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Text from "../components/Text";
 import { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/AntDesign";
+import EntypoIcon from "react-native-vector-icons/Entypo";
 import { colors } from "../constants/colors";
 import Animated, {
   useAnimatedStyle,
@@ -11,27 +12,59 @@ import Animated, {
   withRepeat,
   Easing,
 } from "react-native-reanimated";
+import TrackPlayer, { RepeatMode } from "react-native-track-player";
+import { sound } from "../data/sound";
+import { formatMinutesSeconds, minutesToSeconds } from "../utils/timingUtils";
 
 const MeditationTimer = () => {
   const { goBack } = useNavigation();
   const { params } = useRoute();
+  // state
   const [currentTime, setCurrentTime] = useState(
     minutesToSeconds(params?.duration)
   );
   const [isPaused, setIsPaused] = useState(true);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+  const [hintText, setHintText] = useState("Press play to begin");
+
+  // animations
   const progressOne = useSharedValue(0);
   const progressTwo = useSharedValue(0);
+  const hintTextAnimatedStyle = useSharedValue(1);
+  const timerAnimatedStyle = useSharedValue(1);
 
-  useEffect(() => {
-    progressOne.value = withRepeat(
-      withTiming(360, { duration: 10000, easing: Easing.linear }),
-      "infinite"
-    );
-    progressTwo.value = withRepeat(
-      withTiming(-360, { duration: 12000, easing: Easing.linear }),
-      "infinite"
-    );
-  }, []);
+  // functions
+  const handleQueueTracks = async () => {
+    await TrackPlayer.add([sound.trackOne]);
+    TrackPlayer.setRepeatMode(RepeatMode.Track);
+  };
+
+  const handleMusicPlaying = async () => {
+    if (isMusicPlaying) {
+      await TrackPlayer.pause();
+    } else {
+      await TrackPlayer.play();
+    }
+    setIsMusicPlaying(!isMusicPlaying);
+  };
+
+  const handleSkipToEnd = () => {
+    setCurrentTime(0);
+  };
+
+  const handleGoBack = () => {
+    TrackPlayer.stop();
+    goBack();
+  };
+
+  const handleEndSession = () => {
+    timerAnimatedStyle.value = withTiming(0);
+    hintTextAnimatedStyle.value = withTiming(0);
+    setTimeout(() => {
+      setHintText("Logging your session...");
+      hintTextAnimatedStyle.value = withTiming(1);
+    }, 1000);
+  };
 
   const animatedStylesOne = useAnimatedStyle(() => {
     return {
@@ -45,15 +78,34 @@ const MeditationTimer = () => {
     };
   });
 
-  function minutesToSeconds(minutes) {
-    return minutes * 60;
-  }
+  // effects
+  useEffect(() => {
+    progressOne.value = withRepeat(
+      withTiming(360, { duration: 10000, easing: Easing.linear }),
+      "infinite"
+    );
+    progressTwo.value = withRepeat(
+      withTiming(-360, { duration: 12000, easing: Easing.linear }),
+      "infinite"
+    );
 
-  function formatMinutesSeconds(totalSeconds) {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = (totalSeconds % 60).toString().padStart(2, "0");
-    return `${minutes}:${seconds}`;
-  }
+    handleQueueTracks();
+
+    TrackPlayer.play();
+  }, []);
+
+  useEffect(() => {
+    if (isPaused) {
+      if (currentTime === minutesToSeconds(params?.duration)) {
+        setHintText("Press play to begin");
+      } else {
+        setHintText("Press play to resume");
+      }
+      hintTextAnimatedStyle.value = withTiming(1);
+    } else {
+      hintTextAnimatedStyle.value = withTiming(0);
+    }
+  }, [isPaused]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,10 +125,16 @@ const MeditationTimer = () => {
     };
   }, [currentTime, isPaused]);
 
+  useEffect(() => {
+    if (currentTime === 0) {
+      handleEndSession();
+    }
+  }, [currentTime]);
+
   return (
     <View style={{ flex: 1, justifyContent: "space-between", padding: 16 }}>
       <View>
-        <Pressable onPress={() => goBack()}>
+        <Pressable onPress={() => handleGoBack()}>
           <Icon name="close" size={24} color={colors.textPrimary} />
         </Pressable>
       </View>
@@ -90,10 +148,18 @@ const MeditationTimer = () => {
         }}
       >
         <View style={{ alignItems: "center" }}>
-          <Text>{formatMinutesSeconds(currentTime)}</Text>
-          {currentTime === minutesToSeconds(params.duration) && (
-            <Text>Press Play To Begin</Text>
-          )}
+          <Text style={{ fontSize: 32, opacity: timerAnimatedStyle }}>
+            {formatMinutesSeconds(currentTime)}
+          </Text>
+
+          <Animated.Text
+            style={{
+              opacity: hintTextAnimatedStyle,
+              color: colors.textPrimary,
+            }}
+          >
+            {hintText}
+          </Animated.Text>
         </View>
         <View style={styles.circle} />
         <Animated.View style={[styles.oval, animatedStylesOne]} />
@@ -106,14 +172,31 @@ const MeditationTimer = () => {
           backgroundColor: colors.onBackground,
           borderRadius: 4,
           flexDirection: "row",
-          justifyContent: "center",
+          justifyContent: "space-around",
         }}
       >
-        <Pressable onPress={() => setIsPaused(!isPaused)}>
+        <Pressable onPress={() => handleSkipToEnd()}>
+          <Icon name="fastforward" size={24} color={colors.textPrimary} />
+        </Pressable>
+        <Pressable
+          onPress={() => setIsPaused(!isPaused)}
+          disabled={currentTime === 0}
+        >
           {isPaused ? (
             <Icon name="play" size={24} color={colors.textPrimary} />
           ) : (
             <Icon name="pause" size={24} color={colors.textPrimary} />
+          )}
+        </Pressable>
+        <Pressable onPress={() => handleMusicPlaying()}>
+          {isMusicPlaying ? (
+            <EntypoIcon name="sound" size={24} color={colors.textPrimary} />
+          ) : (
+            <EntypoIcon
+              name="sound-mute"
+              size={24}
+              color={colors.textPrimary}
+            />
           )}
         </Pressable>
       </View>
