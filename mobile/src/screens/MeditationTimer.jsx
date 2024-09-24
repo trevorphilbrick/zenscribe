@@ -15,6 +15,8 @@ import Animated, {
 import TrackPlayer, { RepeatMode } from "react-native-track-player";
 import { sound } from "../data/sound";
 import { formatMinutesSeconds, minutesToSeconds } from "../utils/timingUtils";
+import { updateData } from "../utils/asyncStorageUtils";
+import { getFormattedDate } from "../utils/dateTimeUtils";
 
 const MeditationTimer = () => {
   const { goBack } = useNavigation();
@@ -57,6 +59,20 @@ const MeditationTimer = () => {
     goBack();
   };
 
+  const handleCreateSessionData = () => {
+    const currentDate = new Date();
+
+    const sessionData = {
+      date: getFormattedDate(currentDate),
+      marked: true,
+      timestamp: currentDate,
+      duration: params?.duration,
+      activity: "Meditation",
+    };
+
+    return { [sessionData["date"]]: sessionData };
+  };
+
   const handleEndSession = () => {
     timerAnimatedStyle.value = withTiming(0);
     hintTextAnimatedStyle.value = withTiming(0);
@@ -64,6 +80,10 @@ const MeditationTimer = () => {
       setHintText("Logging your session...");
       hintTextAnimatedStyle.value = withTiming(1);
     }, 1000);
+
+    const sessionData = handleCreateSessionData();
+
+    updateData("sessions", sessionData);
   };
 
   const animatedStylesOne = useAnimatedStyle(() => {
