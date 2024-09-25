@@ -9,4 +9,5 @@ export const colors = {
   primary: "#93B1A6",
   primaryPressed: "#527366",
   secondary: "#5C8374",
+  tertiary: "#00adf5",
 };
