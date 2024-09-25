@@ -15,7 +15,7 @@ import Animated, {
 import TrackPlayer, { RepeatMode } from "react-native-track-player";
 import { sound } from "../data/sound";
 import { formatMinutesSeconds, minutesToSeconds } from "../utils/timingUtils";
-import { updateData } from "../utils/asyncStorageUtils";
+import { getData, saveData } from "../utils/asyncStorageUtils";
 import { getFormattedDate } from "../utils/dateTimeUtils";
 
 const MeditationTimer = () => {
@@ -64,16 +64,15 @@ const MeditationTimer = () => {
 
     const sessionData = {
       date: getFormattedDate(currentDate),
-      marked: true,
       timestamp: currentDate,
       duration: params?.duration,
       activity: "Meditation",
     };
 
-    return { [sessionData["date"]]: sessionData };
+    return sessionData;
   };
 
-  const handleEndSession = () => {
+  const handleEndSession = async () => {
     timerAnimatedStyle.value = withTiming(0);
     hintTextAnimatedStyle.value = withTiming(0);
     setTimeout(() => {
@@ -83,7 +82,34 @@ const MeditationTimer = () => {
 
     const sessionData = handleCreateSessionData();
 
-    updateData("sessions", sessionData);
+    const existingData = await getData("sessions");
+
+    if (!existingData) {
+      await saveData("sessions", {
+        [sessionData.date]: {
+          sessions: [sessionData],
+          marked: true,
+        },
+      });
+    }
+    if (existingData && existingData[sessionData.date]) {
+      await saveData("sessions", {
+        ...existingData,
+        [sessionData.date]: {
+          sessions: [...existingData[sessionData.date].sessions, sessionData],
+          marked: true,
+        },
+      });
+    }
+    if (existingData && !existingData[sessionData.date]) {
+      await saveData("sessions", {
+        ...existingData,
+        [sessionData.date]: {
+          sessions: [sessionData],
+          marked: true,
+        },
+      });
+    }
   };
 
   const animatedStylesOne = useAnimatedStyle(() => {
@@ -148,6 +174,7 @@ const MeditationTimer = () => {
   useEffect(() => {
     if (currentTime === 0) {
       handleEndSession();
+      goBack();
     }
   }, [currentTime]);
 

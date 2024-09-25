@@ -20,7 +20,8 @@ const HomeCalendar = () => {
   return (
     <Calendar
       onDayPress={(day) => {
-        navigate("DayActivityModal", { date: day });
+        navigate("DayActivityModal", { data: calendarData[day.dateString] });
+        console.log("selected day", day);
       }}
       theme={{
         calendarBackground: colors.background,
