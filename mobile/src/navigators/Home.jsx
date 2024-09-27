@@ -21,6 +21,7 @@ const HomeTabNavigator = () => {
         tabBarInactiveBackgroundColor: colors.background,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
+        headerShown: false,
       }}
     >
       <HomeTab.Screen

@@ -10,4 +10,5 @@ export const colors = {
   primaryPressed: "#527366",
   secondary: "#5C8374",
   tertiary: "#00adf5",
+  lightRed: "#FF6347",
 };

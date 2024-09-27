@@ -5,6 +5,7 @@ import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import IoniconIcon from "react-native-vector-icons/Ionicons";
 import Text from "../components/Text";
 import { colors } from "../constants/colors";
+import Button from "../components/Button";
 
 const dayMap = {
   0: "Sunday",
@@ -35,7 +36,17 @@ const DayActivityModal = () => {
   const { goBack } = useNavigation();
   const { params } = useRoute();
   const { data } = params;
+
+  if (!data || !data.sessions) {
+    return (
+      <View>
+        <Text>There is no data for this day</Text>
+      </View>
+    );
+  }
+
   const selectedDate = new Date(data.sessions[0].timestamp);
+
   const day = selectedDate.getDay();
   const month = selectedDate.getMonth();
   const year = selectedDate.getFullYear();
@@ -44,16 +55,6 @@ const DayActivityModal = () => {
   const handleSortSessions = (sessions) => {
     return sessions.sort((a, b) => a.timestamp - b.timestamp);
   };
-
-  if (!data) {
-    return (
-      <View>
-        <Text>There is no data for this day</Text>
-      </View>
-    );
-  }
-
-  console.log(handleSortSessions(data.sessions));
 
   return (
     <View style={{ padding: 16 }}>
@@ -137,12 +138,24 @@ const DayActivityModal = () => {
                 })}
               </Text>
             </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text>Duration: </Text>
-              <Text
-                style={{ fontWeight: "bold" }}
-              >{`${item.duration}:00`}</Text>
-            </View>
+            {item.activity === "Meditation" && (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text>Duration: </Text>
+                <Text
+                  style={{ fontWeight: "bold" }}
+                >{`${item.duration}:00`}</Text>
+              </View>
+            )}
+            {item.activity === "Journal" && (
+              <Button
+                onPress={() => {
+                  // navigate to journal viewer
+                  return;
+                }}
+              >
+                <Text>View Journal Entry</Text>
+              </Button>
+            )}
           </View>
         )}
         keyExtractor={(item) => item.timestamp}
