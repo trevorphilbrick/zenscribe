@@ -136,6 +136,7 @@ const SignInWall = () => {
         tabBarInactiveBackgroundColor: colors.background,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
+        headerShown: false,
       }}
     >
       <SignInWallTab.Screen
