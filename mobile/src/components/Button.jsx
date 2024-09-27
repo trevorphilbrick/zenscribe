@@ -3,9 +3,10 @@ import { colors } from "../constants/colors";
 import React from "react";
 import Text from "./Text";
 
-const Button = ({ onPress, children, style }) => {
+const Button = ({ onPress, children, style, disabled }) => {
   return (
     <Pressable
+      disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
