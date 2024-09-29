@@ -14,10 +14,6 @@ export default function RemindersSection() {
   const [notis, setNotis] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    console.log(date.toISOString());
-  }, [date]);
-
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     setShow(false);
@@ -36,6 +32,11 @@ export default function RemindersSection() {
   const showTimepicker = () => {
     showMode("time");
   };
+
+  async function fetchReminders() {
+    const notifications = await notifee.getTriggerNotifications();
+    setNotis(notifications);
+  }
 
   async function onCreateTriggerNotification(date, hours, minutes) {
     await notifee.requestPermission();
@@ -69,13 +70,17 @@ export default function RemindersSection() {
       },
       trigger
     );
+    setModalVisible(!modalVisible);
+    fetchReminders();
+  }
+
+  async function cancel(notificationId) {
+    await notifee.cancelNotification(notificationId);
+    fetchReminders();
   }
 
   useEffect(() => {
-    notifee.getTriggerNotifications().then((n) => {
-      setNotis(n);
-      console.log(n);
-    });
+    fetchReminders();
   }, []);
 
   const renderNotificationItem = ({ item }) => (
@@ -94,7 +99,7 @@ export default function RemindersSection() {
         </Text>
       </View>
       <View style={{ justifyContent: "center", marginRight: 12 }}>
-        <Button>
+        <Button onPress={() => cancel(item.notification.id)}>
           <Text>Delete</Text>
         </Button>
       </View>
@@ -106,27 +111,31 @@ export default function RemindersSection() {
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <View>
-              <Button style={styles.btnMargin} onPress={showDatepicker}>
-                <Text>Set date for reminder</Text>
+            <Text style={{ fontSize: 20, marginBottom: 24 }}>Set Daily Reminder</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 24 }}>
+              <Button onPress={showDatepicker}>
+                <Text>Date: {date.toLocaleDateString()}</Text>
               </Button>
-              <Button style={styles.btnMargin} onPress={showTimepicker}>
-                <Text>Set time for reminder</Text>
+              <Button onPress={showTimepicker}>
+                <Text>
+                  Time:{" "}
+                  {date.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </Text>
               </Button>
             </View>
-            <Text style={styles.date}>
-              Set for{" "}
-              {`${date.toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-              })}, ${date.toLocaleTimeString("en-US", {
+            {/* <Text style={{ marginBottom: 16, fontSize: 18 }}>
+              Set reminder for{" "}
+              {`${date.toLocaleDateString()}, ${date.toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "2-digit",
                 hour12: true,
               })}`}
               ?
-            </Text>
+            </Text> */}
             {show && <DateTimePicker value={date} mode={mode} onChange={onChange} />}
             <View style={styles.modalButtons}>
               <Button style={{ backgroundColor: "none", borderWidth: 1, borderRadius: 4, borderColor: "gray" }} onPress={() => setModalVisible(!modalVisible)}>
@@ -156,9 +165,9 @@ const styles = StyleSheet.create({
     margin: 24,
     backgroundColor: colors.onBackground,
     borderRadius: 4,
-    padding: 35,
+    paddingBottom: 32,
+    paddingHorizontal: 32,
+    paddingTop: 24,
   },
-  btnMargin: { marginBottom: 16 },
-  date: { marginBottom: 16, fontSize: 18 },
   modalButtons: { flexDirection: "row", justifyContent: "space-between" },
 });
