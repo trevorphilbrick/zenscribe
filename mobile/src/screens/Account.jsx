@@ -22,12 +22,7 @@ const Account = () => {
   return (
     <View style={styles.screen}>
       <RemindersSection />
-      <Button
-        style={styles.signOutButton}
-        onPress={() => stytchClient.session.revoke()}
-      >
-        <Text>Account</Text>
-      </Button>
+
       <Button
         onPress={() => handleSignout()}
         style={{ marginBottom: 16 }}
@@ -35,9 +30,11 @@ const Account = () => {
       >
         <Text>Sign Out</Text>
       </Button>
-      <Button onPress={() => clearData()}>
-        <Text>Clear Local Storage</Text>
-      </Button>
+      {__DEV__ && (
+        <Button onPress={() => clearData()}>
+          <Text>Clear Local Storage</Text>
+        </Button>
+      )}
     </View>
   );
 };
