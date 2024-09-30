@@ -6,8 +6,6 @@ import RemindersSection from "../components/RemindersSection";
 import { useState } from "react";
 import { clearData } from "../utils/asyncStorageUtils";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-
 
 const Account = () => {
   const stytchClient = useStytch();
@@ -24,8 +22,12 @@ const Account = () => {
   return (
     <View style={styles.screen}>
       <RemindersSection />
-      <Button style={styles.signOutButton} onPress={() => stytchClient.session.revoke()}>
-      <Text>Account</Text>
+      <Button
+        style={styles.signOutButton}
+        onPress={() => stytchClient.session.revoke()}
+      >
+        <Text>Account</Text>
+      </Button>
       <Button
         onPress={() => handleSignout()}
         style={{ marginBottom: 16 }}
