@@ -7,6 +7,7 @@ import MeditationTimer from "../screens/MeditationTimer";
 import DayActivityModal from "../screens/DayActivityModal";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { colors } from "../constants/colors";
+import Icon from "react-native-vector-icons/AntDesign";
 
 const HomeStack = createStackNavigator();
 
@@ -20,10 +21,27 @@ const HomeTabNavigator = () => {
         tabBarInactiveBackgroundColor: colors.background,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
+        headerShown: false,
       }}
     >
-      <HomeTab.Screen name="Home" component={Home} />
-      <HomeTab.Screen name="Account" component={Account} />
+      <HomeTab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Icon name="home" size={24} color={color} />
+          ),
+        }}
+      />
+      <HomeTab.Screen
+        name="Account"
+        component={Account}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Icon name="user" size={24} color={color} />
+          ),
+        }}
+      />
     </HomeTab.Navigator>
   );
 };

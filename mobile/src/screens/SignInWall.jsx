@@ -5,6 +5,7 @@ import { colors } from "../constants/colors";
 import { useStytch, useStytchSession } from "@stytch/react-native";
 import { useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon from "react-native-vector-icons/AntDesign";
 
 const SignInWallTab = createBottomTabNavigator();
 
@@ -17,7 +18,7 @@ const CreateAccount = () => {
 
   useEffect(() => {
     if (session) {
-      navigate.navigate("HomeNavigator");
+      navigate.navigate("HomeNavigator", { screen: "Home" });
     }
   }, [session]);
 
@@ -135,17 +136,28 @@ const SignInWall = () => {
         tabBarInactiveBackgroundColor: colors.background,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
+        headerShown: false,
       }}
     >
       <SignInWallTab.Screen
         name="SignIn"
         component={SignIn}
-        options={{ tabBarLabel: "Sign In" }}
+        options={{
+          tabBarLabel: "Sign In",
+          tabBarIcon: ({ color }) => (
+            <Icon name="login" size={24} color={color} />
+          ),
+        }}
       />
       <SignInWallTab.Screen
         name="CreateAccount"
         component={CreateAccount}
-        options={{ tabBarLabel: "Create Account" }}
+        options={{
+          tabBarLabel: "Create Account",
+          tabBarIcon: ({ color }) => (
+            <Icon name="adduser" size={24} color={color} />
+          ),
+        }}
       />
     </SignInWallTab.Navigator>
   );
