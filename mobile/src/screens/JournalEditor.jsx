@@ -29,7 +29,7 @@ const JournalEditor = () => {
   const handleSave = async () => {
     const sessionData = handleCreateSessionData();
 
-    const existingData = getData("sessions");
+    const existingData = await getData("sessions");
 
     if (!existingData) {
       await saveData("sessions", {

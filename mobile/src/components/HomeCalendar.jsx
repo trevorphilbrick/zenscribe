@@ -12,6 +12,7 @@ const HomeCalendar = () => {
   useFocusEffect(
     useCallback(() => {
       getData("sessions").then((data) => {
+        console.log("calendar data", data);
         setCalendarData(data);
       });
     }, [])

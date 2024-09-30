@@ -110,6 +110,10 @@ const MeditationTimer = () => {
         },
       });
     }
+
+    TrackPlayer.stop();
+
+    goBack();
   };
 
   const animatedStylesOne = useAnimatedStyle(() => {
@@ -174,7 +178,6 @@ const MeditationTimer = () => {
   useEffect(() => {
     if (currentTime === 0) {
       handleEndSession();
-      goBack();
     }
   }, [currentTime]);
 
