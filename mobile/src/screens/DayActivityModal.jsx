@@ -33,7 +33,7 @@ const monthMap = {
 };
 
 const DayActivityModal = () => {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const { params } = useRoute();
   const { data } = params;
 
@@ -149,8 +149,9 @@ const DayActivityModal = () => {
             {item.activity === "Journal" && (
               <Button
                 onPress={() => {
-                  // navigate to journal viewer
-                  return;
+                  navigate("JournalViewer", {
+                    journalEntry: item.journalEntry,
+                  });
                 }}
               >
                 <Text>View Journal Entry</Text>

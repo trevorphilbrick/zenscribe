@@ -4,8 +4,8 @@ import { useStytch } from "@stytch/react-native";
 import Button from "../components/Button";
 import RemindersSection from "../components/RemindersSection";
 import { useState } from "react";
-import { clearData } from "../utils/asyncStorageUtils";
 import { useNavigation } from "@react-navigation/native";
+import { colors } from "../constants/colors";
 
 const Account = () => {
   const stytchClient = useStytch();
@@ -22,19 +22,21 @@ const Account = () => {
   return (
     <View style={styles.screen}>
       <RemindersSection />
-
-      <Button
-        onPress={() => handleSignout()}
-        style={{ marginBottom: 16 }}
-        disabled={signoutDisabled}
+      <View
+        style={{
+          borderTopColor: colors.onBackground,
+          borderTopWidth: 1,
+          paddingTop: 16,
+        }}
       >
-        <Text>Sign Out</Text>
-      </Button>
-      {__DEV__ && (
-        <Button onPress={() => clearData()}>
-          <Text>Clear Local Storage</Text>
+        <Button
+          onPress={() => handleSignout()}
+          style={{ marginBottom: 16 }}
+          disabled={signoutDisabled}
+        >
+          <Text>Sign Out</Text>
         </Button>
-      )}
+      </View>
     </View>
   );
 };
@@ -42,6 +44,8 @@ const Account = () => {
 const styles = StyleSheet.create({
   screen: {
     paddingHorizontal: 16,
+    height: "100%",
+    paddingBottom: 16,
   },
 });
 

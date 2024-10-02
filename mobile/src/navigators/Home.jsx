@@ -5,6 +5,7 @@ import Account from "../screens/Account";
 import JournalEditor from "../screens/JournalEditor";
 import MeditationTimer from "../screens/MeditationTimer";
 import DayActivityModal from "../screens/DayActivityModal";
+import JournalViewer from "../screens/JournalViewer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { colors } from "../constants/colors";
 import Icon from "react-native-vector-icons/AntDesign";
@@ -51,6 +52,7 @@ const HomeNavigator = () => {
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="HomeTabNavigator" component={HomeTabNavigator} />
       <HomeStack.Screen name="JournalEditor" component={JournalEditor} />
+      <HomeStack.Screen name="JournalViewer" component={JournalViewer} />
       <HomeStack.Screen name="MeditationTimer" component={MeditationTimer} />
       <HomeStack.Group screenOptions={{ presentation: "modal" }}>
         <HomeStack.Screen

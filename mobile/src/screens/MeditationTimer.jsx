@@ -17,6 +17,7 @@ import { sound } from "../data/sound";
 import { formatMinutesSeconds, minutesToSeconds } from "../utils/timingUtils";
 import { getData, saveData } from "../utils/asyncStorageUtils";
 import { getFormattedDate } from "../utils/dateTimeUtils";
+import Toast from "react-native-toast-message";
 
 const MeditationTimer = () => {
   const { goBack } = useNavigation();
@@ -111,9 +112,13 @@ const MeditationTimer = () => {
       });
     }
 
-    TrackPlayer.stop();
+    Toast.show({
+      type: "success",
+      text1: "Session logged!",
+      text2: "Going back to home screen.",
+    });
 
-    goBack();
+    handleGoBack();
   };
 
   const animatedStylesOne = useAnimatedStyle(() => {

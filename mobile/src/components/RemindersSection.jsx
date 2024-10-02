@@ -4,8 +4,9 @@ import Text from "./Text";
 import React, { useState, useEffect } from "react";
 import notifee, { TriggerType, RepeatFrequency } from "@notifee/react-native";
 import Button from "./Button";
-// import { randomUUID } from "expo-crypto";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/AntDesign";
 
 export default function RemindersSection() {
   const [date, setDate] = useState(new Date());
@@ -46,7 +47,6 @@ export default function RemindersSection() {
       name: "Default Channel",
     });
 
-    console.log(date);
     date.setHours(hours);
     date.setMinutes(minutes);
 
@@ -58,18 +58,25 @@ export default function RemindersSection() {
         allowWhileIdle: true,
       },
     };
-
-    await notifee.createTriggerNotification(
-      {
-        // id: randomUUID(),
-        title: "Don't forget to breath.",
-        body: "It's time to meditate.",
-        android: {
-          channelId,
+    try {
+      await notifee.createTriggerNotification(
+        {
+          title: "Don't forget to breath.",
+          body: "It's time to meditate.",
+          android: {
+            channelId,
+          },
         },
-      },
-      trigger
-    );
+        trigger
+      );
+    } catch (e) {
+      Toast.show({
+        type: "info",
+        text1: "Uh oh!",
+        text2: "Make sure to schedule a reminder for the future.",
+      });
+    }
+
     setModalVisible(!modalVisible);
     fetchReminders();
   }
@@ -84,7 +91,17 @@ export default function RemindersSection() {
   }, []);
 
   const renderNotificationItem = ({ item }) => (
-    <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", padding: 8, marginTop: 8, backgroundColor: colors.secondary, borderRadius: 4 }}>
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        padding: 8,
+        marginTop: 8,
+        backgroundColor: colors.secondary,
+        borderRadius: 4,
+      }}
+    >
       <View>
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Reminder</Text>
         <Text style={{ fontSize: 16 }}>5 minute meditation.</Text>
@@ -107,12 +124,50 @@ export default function RemindersSection() {
   );
 
   return (
-    <View style={styles.reminders}>
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={notis}
+        keyExtractor={(item) => item.notification.id}
+        renderItem={renderNotificationItem}
+        ListHeaderComponent={
+          <Button onPress={() => setModalVisible(true)}>
+            <Text>New reminder</Text>
+          </Button>
+        }
+        ListEmptyComponent={
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 48,
+            }}
+          >
+            <Icon
+              name="message1"
+              size={24}
+              color={colors.textSecondary}
+              style={{ marginBottom: 8 }}
+            />
+            <Text style={{ color: colors.textSecondary }}>
+              Set up reminders to create a daily meditation schedule.
+            </Text>
+          </View>
+        }
+        stickyHeaderIndices={[0]}
+      />
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={{ fontSize: 20, marginBottom: 24 }}>Set Daily Reminder</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 24 }}>
+            <Text style={{ fontSize: 20, marginBottom: 24 }}>
+              Set Daily Reminder
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: 24,
+              }}
+            >
               <Button onPress={showDatepicker}>
                 <Text>Date: {date.toLocaleDateString()}</Text>
               </Button>
@@ -127,40 +182,53 @@ export default function RemindersSection() {
                 </Text>
               </Button>
             </View>
-            {/* <Text style={{ marginBottom: 16, fontSize: 18 }}>
-              Set reminder for{" "}
-              {`${date.toLocaleDateString()}, ${date.toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              })}`}
-              ?
-            </Text> */}
-            {show && <DateTimePicker value={date} mode={mode} onChange={onChange} />}
+
+            {show && (
+              <DateTimePicker value={date} mode={mode} onChange={onChange} />
+            )}
             <View style={styles.modalButtons}>
-              <Button style={{ backgroundColor: "none", borderWidth: 1, borderRadius: 4, borderColor: "gray" }} onPress={() => setModalVisible(!modalVisible)}>
+              <Button
+                style={{
+                  backgroundColor: "none",
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  borderColor: "gray",
+                }}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
                 <Text>Cancel</Text>
               </Button>
-              <Button onPress={() => onCreateTriggerNotification(new Date(date), `${date.getHours().toString().padStart(2, "0")}`, `${date.getMinutes().toString().padStart(2, "0")}`)}>
+              <Button
+                onPress={() =>
+                  onCreateTriggerNotification(
+                    new Date(date),
+                    `${date.getHours().toString().padStart(2, "0")}`,
+                    `${date.getMinutes().toString().padStart(2, "0")}`
+                  )
+                }
+              >
                 <Text>Confirm</Text>
               </Button>
             </View>
           </View>
         </View>
       </Modal>
-      <Button onPress={() => setModalVisible(true)}>
-        <Text>New reminder</Text>
-      </Button>
-      <View>
-        <FlatList data={notis} keyExtractor={(item) => item.notification.id} renderItem={renderNotificationItem} />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  reminders: { backgroundColor: colors.onBackground, padding: 24, marginBottom: 16, borderRadius: 4 },
-  centeredView: { flex: 1, justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" },
+  reminders: {
+    backgroundColor: colors.onBackground,
+    padding: 24,
+    marginBottom: 16,
+    borderRadius: 4,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
   modalView: {
     margin: 24,
     backgroundColor: colors.onBackground,
