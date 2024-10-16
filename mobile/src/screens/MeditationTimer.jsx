@@ -18,8 +18,10 @@ import { formatMinutesSeconds, minutesToSeconds } from "../utils/timingUtils";
 import { getData, saveData } from "../utils/asyncStorageUtils";
 import { getFormattedDate } from "../utils/dateTimeUtils";
 import Toast from "react-native-toast-message";
+import { useAppStore } from "../state/useAppStore";
 
 const MeditationTimer = () => {
+  const { playSoundOnStart, updateSessions } = useAppStore((state) => state);
   const { goBack } = useNavigation();
   const { params } = useRoute();
   // state
@@ -27,7 +29,7 @@ const MeditationTimer = () => {
     minutesToSeconds(params?.duration)
   );
   const [isPaused, setIsPaused] = useState(true);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(playSoundOnStart);
   const [hintText, setHintText] = useState("Press play to begin");
 
   // animations
@@ -83,38 +85,11 @@ const MeditationTimer = () => {
 
     const sessionData = handleCreateSessionData();
 
-    const existingData = await getData("sessions");
-
-    if (!existingData) {
-      await saveData("sessions", {
-        [sessionData.date]: {
-          sessions: [sessionData],
-          marked: true,
-        },
-      });
-    }
-    if (existingData && existingData[sessionData.date]) {
-      await saveData("sessions", {
-        ...existingData,
-        [sessionData.date]: {
-          sessions: [...existingData[sessionData.date].sessions, sessionData],
-          marked: true,
-        },
-      });
-    }
-    if (existingData && !existingData[sessionData.date]) {
-      await saveData("sessions", {
-        ...existingData,
-        [sessionData.date]: {
-          sessions: [sessionData],
-          marked: true,
-        },
-      });
-    }
+    await updateSessions(sessionData);
 
     Toast.show({
       type: "success",
-      text1: "Session logged!",
+      text1: "Meditation session logged!",
       text2: "Going back to home screen.",
     });
 
@@ -146,7 +121,9 @@ const MeditationTimer = () => {
 
     handleQueueTracks();
 
-    TrackPlayer.play();
+    if (playSoundOnStart) {
+      TrackPlayer.play();
+    }
   }, []);
 
   useEffect(() => {

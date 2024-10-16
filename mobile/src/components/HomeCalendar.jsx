@@ -1,27 +1,18 @@
 import { Calendar } from "react-native-calendars";
 import { colors } from "../constants/colors";
 import { useNavigation } from "@react-navigation/native";
-import { useCallback, useState } from "react";
-import { getData } from "../utils/asyncStorageUtils";
-import { useFocusEffect } from "@react-navigation/native";
+import { useAppStore } from "../state/useAppStore";
 
 const HomeCalendar = () => {
   const { navigate } = useNavigation();
-  const [calendarData, setCalendarData] = useState({});
+  const days = useAppStore((state) => state.days);
 
-  useFocusEffect(
-    useCallback(() => {
-      getData("sessions").then((data) => {
-        console.log("calendar data", data);
-        setCalendarData(data);
-      });
-    }, [])
-  );
+  console.log("sessions", days);
 
   return (
     <Calendar
       onDayPress={(day) => {
-        navigate("DayActivityModal", { data: calendarData[day.dateString] });
+        navigate("DayActivityModal", { data: days[day.dateString] });
         console.log("selected day", day);
       }}
       theme={{
@@ -46,7 +37,7 @@ const HomeCalendar = () => {
         textMonthFontSize: 24,
         textDayHeaderFontSize: 16,
       }}
-      markedDates={calendarData}
+      markedDates={days}
     />
   );
 };
