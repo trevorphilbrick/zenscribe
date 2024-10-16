@@ -5,20 +5,23 @@ import Icon from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Text from "../components/Text";
-import { getData, saveData } from "../utils/asyncStorageUtils";
 import { getFormattedDate } from "../utils/dateTimeUtils";
+import { useAppStore } from "../state/useAppStore";
+import Toast from "react-native-toast-message";
 
 const JournalEditor = () => {
   const { goBack } = useNavigation();
   const { bottom } = useSafeAreaInsets();
   const [journalEntry, setJournalEntry] = useState("");
+  const { updateSessions } = useAppStore((state) => state);
 
   const handleCreateSessionData = () => {
     const currentDate = new Date();
+    const formattedDate = getFormattedDate(currentDate);
 
     const sessionData = {
-      date: getFormattedDate(currentDate),
-      timestamp: currentDate,
+      date: formattedDate,
+      timestamp: currentDate.toISOString(),
       activity: "Journal",
       journalEntry,
     };
@@ -29,34 +32,13 @@ const JournalEditor = () => {
   const handleSave = async () => {
     const sessionData = handleCreateSessionData();
 
-    const existingData = await getData("sessions");
+    await updateSessions(sessionData);
 
-    if (!existingData) {
-      await saveData("sessions", {
-        [sessionData.date]: {
-          sessions: [sessionData],
-          marked: true,
-        },
-      });
-    }
-    if (existingData && existingData[sessionData.date]) {
-      await saveData("sessions", {
-        ...existingData,
-        [sessionData.date]: {
-          sessions: [...existingData[sessionData.date].sessions, sessionData],
-          marked: true,
-        },
-      });
-    }
-    if (existingData && !existingData[sessionData.date]) {
-      await saveData("sessions", {
-        ...existingData,
-        [sessionData.date]: {
-          sessions: [sessionData],
-          marked: true,
-        },
-      });
-    }
+    Toast.show({
+      type: "success",
+      text1: "Meditation session logged!",
+      text2: "Going back to home screen.",
+    });
 
     goBack();
   };
