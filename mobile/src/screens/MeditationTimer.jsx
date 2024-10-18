@@ -79,7 +79,7 @@ const MeditationTimer = () => {
     timerAnimatedStyle.value = withTiming(0);
     hintTextAnimatedStyle.value = withTiming(0);
     setTimeout(() => {
-      setHintText("Logging your session...");
+      setHintText("Nice job! Logging your session...");
       hintTextAnimatedStyle.value = withTiming(1);
     }, 1000);
 
@@ -87,13 +87,17 @@ const MeditationTimer = () => {
 
     await updateSessions(sessionData);
 
+    hintTextAnimatedStyle.value = withTiming(0);
+    setTimeout(() => {
+      setHintText("Your session was logged. Feel free to go back.");
+      hintTextAnimatedStyle.value = withTiming(1);
+    }, 1000);
+
     Toast.show({
       type: "success",
       text1: "Meditation session logged!",
       text2: "Going back to home screen.",
     });
-
-    handleGoBack();
   };
 
   const animatedStylesOne = useAnimatedStyle(() => {
@@ -183,7 +187,13 @@ const MeditationTimer = () => {
           <Text style={{ fontSize: 32, opacity: timerAnimatedStyle }}>
             {formatMinutesSeconds(currentTime)}
           </Text>
-
+        </View>
+        <View style={styles.circle} />
+        <Animated.View style={[styles.oval, animatedStylesOne]} />
+        <Animated.View style={[styles.oval, animatedStylesTwo]} />
+      </View>
+      <View>
+        <View style={styles.hintTextContainer}>
           <Animated.Text
             style={{
               opacity: hintTextAnimatedStyle,
@@ -193,44 +203,41 @@ const MeditationTimer = () => {
             {hintText}
           </Animated.Text>
         </View>
-        <View style={styles.circle} />
-        <Animated.View style={[styles.oval, animatedStylesOne]} />
-        <Animated.View style={[styles.oval, animatedStylesTwo]} />
-      </View>
-      <View
-        style={{
-          padding: 16,
-          marginBottom: 24,
-          backgroundColor: colors.onBackground,
-          borderRadius: 4,
-          flexDirection: "row",
-          justifyContent: "space-around",
-        }}
-      >
-        <Pressable onPress={() => handleSkipToEnd()}>
-          <Icon name="fastforward" size={24} color={colors.textPrimary} />
-        </Pressable>
-        <Pressable
-          onPress={() => setIsPaused(!isPaused)}
-          disabled={currentTime === 0}
+        <View
+          style={{
+            padding: 16,
+            marginBottom: 24,
+            backgroundColor: colors.onBackground,
+            borderRadius: 4,
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
         >
-          {isPaused ? (
-            <Icon name="play" size={24} color={colors.textPrimary} />
-          ) : (
-            <Icon name="pause" size={24} color={colors.textPrimary} />
-          )}
-        </Pressable>
-        <Pressable onPress={() => handleMusicPlaying()}>
-          {isMusicPlaying ? (
-            <EntypoIcon name="sound" size={24} color={colors.textPrimary} />
-          ) : (
-            <EntypoIcon
-              name="sound-mute"
-              size={24}
-              color={colors.textPrimary}
-            />
-          )}
-        </Pressable>
+          <Pressable onPress={() => handleSkipToEnd()}>
+            <Icon name="fastforward" size={24} color={colors.textPrimary} />
+          </Pressable>
+          <Pressable
+            onPress={() => setIsPaused(!isPaused)}
+            disabled={currentTime === 0}
+          >
+            {isPaused ? (
+              <Icon name="play" size={24} color={colors.textPrimary} />
+            ) : (
+              <Icon name="pause" size={24} color={colors.textPrimary} />
+            )}
+          </Pressable>
+          <Pressable onPress={() => handleMusicPlaying()}>
+            {isMusicPlaying ? (
+              <EntypoIcon name="sound" size={24} color={colors.textPrimary} />
+            ) : (
+              <EntypoIcon
+                name="sound-mute"
+                size={24}
+                color={colors.textPrimary}
+              />
+            )}
+          </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -256,6 +263,10 @@ const styles = StyleSheet.create({
     borderColor: colors.textPrimary,
     borderWidth: 1,
     borderRadius: 100,
+  },
+  hintTextContainer: {
+    alignItems: "center",
+    marginBottom: 42,
   },
 });
 
