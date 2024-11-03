@@ -6,6 +6,9 @@ import { StytchClient, StytchProvider } from "@stytch/react-native";
 import { PlaybackService } from "./src/utils/PlaybackService";
 import TrackPlayer from "react-native-track-player";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 export const stytch = new StytchClient(
   "public-token-test-d281d93b-a84f-4c6b-bf8e-eaa21cacf5cc"

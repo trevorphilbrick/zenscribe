@@ -6,6 +6,7 @@ import { useStytch } from "@stytch/react-native";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as SplashScreen from "expo-splash-screen";
 
 const RootStack = createStackNavigator();
 
@@ -14,11 +15,20 @@ const Root = () => {
   const { navigate } = useNavigation();
   const { top } = useSafeAreaInsets();
 
+  const hideSplashScreen = async () => {
+    await SplashScreen.hideAsync();
+  };
+
   useEffect(() => {
     stytchClient.session.onChange((session) => {
-      if (!session) {
+      if (session) {
+        navigate("HomeNavigator");
+      } else {
         navigate("SignInWall");
       }
+      setTimeout(() => {
+        hideSplashScreen();
+      }, 1000);
     });
   }, []);
 
