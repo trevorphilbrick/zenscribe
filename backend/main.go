@@ -15,6 +15,12 @@ type User struct {
 	Created_at time.Time `json:"created_at" binding:"required"`
 }
 
+// journal entries struct
+
+// sessions struct
+
+// dates struct
+
 func testAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "backend successfully reached"})
 }
