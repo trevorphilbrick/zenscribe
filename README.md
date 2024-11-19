@@ -9,5 +9,8 @@ A meditation platform for scheduling, tracking, and journaling daily meditations
 
 ## About
 ### Mobile
+Written in React Native, producing both an Android app and iOS app.
 ### Front-end
+Written in React, and used as a landing page and host of terms of service.
 ### Back-end
+Written in Golang and serves the front-end as a static site, while also serving as a Rest API.
