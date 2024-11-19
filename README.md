@@ -7,4 +7,7 @@ A meditation platform for scheduling, tracking, and journaling daily meditations
 
 
 
-## about
+## About
+### Mobile
+### Front-end
+### Back-end
