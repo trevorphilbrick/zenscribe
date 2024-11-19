@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,6 +45,8 @@ func createUser(c *gin.Context) {
 
 func main() {
 	router := gin.Default()
+
+	router.Use(static.Serve("/", static.LocalFile("../frontend/dist", true)))
 
 	router.POST("/user", createUser)
 	router.GET("/", testAPI)
