@@ -11,6 +11,7 @@ A meditation platform for scheduling, tracking, and journaling daily meditations
 ### Mobile
 Written in React Native, producing both an Android app and iOS app.
 ### Front-end
+<a href="zenscribe.onrender.com"> Check out the site! </a>
 Written in React, and used as a landing page and host of terms of service.
 ### Back-end
 Written in Golang and serves the front-end as a static site, while also serving as a Rest API.
